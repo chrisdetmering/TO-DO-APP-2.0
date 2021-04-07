@@ -1,72 +1,61 @@
-const form     = document.querySelector('#addForm');
-const input    = document.querySelector('input');
-const ul       = document.querySelector('#toDoList');
 
+const ul = document.querySelector('#toDoList');
 const clearBtn = document.querySelector('#clearList');
 
-// Create -> li
-function createLi() {
-    //declare variable and create elements for list, inpput value, and remove button
-    const li   = document.createElement('li');
-    const span = document.createElement('span');
-    const removeBtn = document.createElement('button');
+function createLi(text) {
+    const li = document.createElement('li');
+    
+    const removeButton = createRemoveButton(li);
+    const textSpan = createTextSpan(text);
 
-    //Get the input value to li item
-    span.textContent = input.value;
+    li.appendChild(textSpan);
+    li.appendChild(removeButton);
 
-    //set remove button text and ID value
-    removeBtn.textContent = 'X';
-   
-    //append the two elements to the list
-    li.appendChild(span);
-    li.appendChild(removeBtn);
-
-    // Show CLEAR ALL button on main page - on initial load display is set to NONE
     clearBtn.setAttribute('style', 'display: show');
 
    return li;
 }
 
 
-// on SUBMIT/ADD action call the function 
-form.addEventListener('submit', (e) => {
+//
+document.querySelector('#addForm').addEventListener('submit', (e) => {
     e.preventDefault();
+    const input = document.querySelector('input');
+    const text = input.value; 
+    if (text === "") return;
 
-    const li = createLi();
-    //if the input is NOT empty execute
-    if (input.value !== ''){
-            //add li with all of its values and items to ul
-            ul.appendChild(li);
-                //Clear the input field
-                document.getElementById("addItem").value=""
-    }
 
+    const li = createLi(text);
+ 
+    ul.appendChild(li);
+    
+    input.value = "";
 });
 
-//Delete individual items from UL - to do list
-ul.addEventListener('click', (e) => {
-    if(e.target.textContent === 'X' ){
-        const button = e.target;
-        const     li = button.parentNode;
-        const     ul = li.parentNode;
 
-        ul.removeChild(li);
+function createRemoveButton(todo) { 
+    const removeButton = document.createElement('button');
+    removeButton.textContent = 'X';
 
-        } 
-    });
+    removeButton.addEventListener("click", () => { 
+        todo.remove();
+    })
+    return removeButton;
+}
 
 
-//Line through toggle on selected item    
-ul.addEventListener('mousedown', (e) => {
-     if(e.target.textContent !== '' ){
-        const line = e.target; 
-        line.onclick = () => {
-            line.classList.toggle('line')
-        }
-    }
-});
+function createTextSpan(text) { 
+    const span = document.createElement('span');
+    span.textContent = text;
 
- //Clear ALL button - clear ul
+    span.addEventListener("click", () => { 
+        span.classList.toggle('line')
+    })
+    return span; 
+}
+
+
+
 function clearList(){
     ul.innerHTML ="";
     clearBtn.setAttribute('style', 'display: none');
